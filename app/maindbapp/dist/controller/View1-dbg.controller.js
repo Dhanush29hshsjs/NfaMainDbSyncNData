@@ -16,8 +16,8 @@ sap.ui.define([
         var projectId = oEvent.getParameter("arguments").DocId;
         let user,userEmail;
         try {
-             user = sap.ushell.services.UserInfo.getFullName();
-             userEmail = sap.ushell.services.UserInfo.getEmail();    
+             user = sap.ushell.Container.getUser().getFullName();
+             userEmail = sap.ushell.Container.getUser().getEmail();    
         } catch (error) {
              user = 'Tesst User'; 
              userEmail = 'akshay.br@peolsolutions.com' 
@@ -31,7 +31,24 @@ sap.ui.define([
         oFunction.setParameter('user',userEmail);
         await oFunction.execute();
         var oContext = oFunction.getBoundContext().getValue();
-        
+        if(oContext.value.substring(0,3)=='Doc'){
+            var href_For_Product_display = ( sap.ushell && sap.ushell.Container && await sap.ushell.Container.getServiceAsync("Navigation")) || "";
+							if(href_For_Product_display != ""){
+								await href_For_Product_display.navigate({
+									target : {    semanticObject: "nfaformflp",
+                                        action: "display" },
+									params : { "PAN_Number" : oContext.value,
+                                        "IsActiveEntity": true }
+								})
+							}
+          
+        }else{
+            debugger
+            this.getView().getContent()[0].mAggregations.content[0].setIllustrationType('sapIllus-ErrorScreen');
+            this.getView().getContent()[0].mAggregations.content[0].setTitle('Oops! Something went wrong');
+            this.getView().getContent()[0].mAggregations.content[0].setDescription(oContext.value);
+        }
+        debugger
        },
         onBeforeRendering:function(oEvent){
         debugger

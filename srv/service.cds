@@ -19,6 +19,8 @@ service PanApproval {
  function wf_data(panno:String,comment : String) returns String;
  function reject(data:String,email:String) returns String;
  function getDataForUserAndProject(user:String,project:String) returns String;
+ function draftChange(data : String)                returns String;
+ 
 //  entity generaldetails_TAB as projection on my.generaldetails;
 //  entity vendor_response_TAB as projection on my.vendor_response;
 //  entity price_degit config --list tails_TAB as projection on my.price_details;
@@ -40,4 +42,6 @@ entity PAN_Comments as projection on my.PAN_Comments;
  entity approversKeys as projection on my.approversKeys;
     function sendforapproval(data:String) returns LargeString;
     function comment(data:String) returns LargeString;
+    function draftChange(data : String)                returns String;
+ 
 }

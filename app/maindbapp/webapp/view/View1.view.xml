@@ -3,11 +3,13 @@
     xmlns="sap.m">
     <Page id="page">
    
-    <IllustratedMessage id="IllustratedMessage1" title=" "
+    <IllustratedMessage id="IllustratedMessage1" title=" " 
     description="Hey {DocId>/userName}, Please wait while we prepare your data for the project - {DocId>/projectId}"
     illustrationType="sapIllus-BeforeSearch"
     illustrationSize="Auto"></IllustratedMessage>
-<HBox justifyContent="Center"><BusyIndicator busy="true" ></BusyIndicator></HBox>
+
+
+<HBox id="_IDGenHBox" justifyContent="Center"><BusyIndicator busy="true" ></BusyIndicator></HBox>
     
     </Page>
 </mvc:View>

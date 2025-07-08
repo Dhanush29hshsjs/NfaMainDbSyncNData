@@ -8,6 +8,8 @@ modules:
   path: gen/srv
   requires:
   - name: mainDb2-db
+  - name: uaa_mainDb2
+  - name: mainDb2-destination-service
   provides:
   - name: srv-api
     properties:
@@ -68,9 +70,23 @@ modules:
       - maindbapp.zip
       name: maindbapp
       target-path: resources/
+    - artifacts:
+      - maindbapp2.zip
+      name: maindbapp2
+      target-path: resources/
 - name: maindbapp
   type: html5
   path: app/maindbapp
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: maindbapp2
+  type: html5
+  path: app/maindbapp2
   build-parameters:
     build-result: dist
     builder: custom
@@ -97,11 +113,20 @@ resources:
             ProxyType: Internet
             Type: HTTP
             URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: mainDb2-srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
           existing_destinations_policy: update
       version: 1.0.0
     service: destination
     service-name: mainDb2-destination-service
     service-plan: lite
+  requires:
+  - name: srv-api
 - name: mainDb2_html_repo_host
   type: org.cloudfoundry.managed-service
   parameters:

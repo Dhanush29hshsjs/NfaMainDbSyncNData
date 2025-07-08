@@ -1,0 +1,1 @@
+using PanApproval as service from '../../srv/service';

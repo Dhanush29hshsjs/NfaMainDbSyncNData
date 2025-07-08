@@ -35,7 +35,7 @@ Required_at_Site_Date : String;
 RFP_Number : String;
 RFP_Publish_Date : String;
 Time_Taken_for_FinalizationDASHIn_DAYS : String;
-status : String;
+status : String default'New';
 statusInd :Integer;//used for criticality rep
 created_by :String;
 task_id : String;
@@ -169,7 +169,7 @@ Supplier_Origin_State : String;
 Destination_State_BKTShipDASHto_LocationBKT : String; 
 Vendor_GST_Number : String; 
 Vendor_CE_Score : String; 
-Vendor_CE_Date : Date; 
+Vendor_CE_Date : String; 
 Vendor_PE_Score : String; 
 Vendor_PE_Date : String; 
 Vendor_Contact_PersonDASH1 : String; 
