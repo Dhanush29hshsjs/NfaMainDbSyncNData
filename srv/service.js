@@ -6,7 +6,7 @@ if (isMainThread) {
     module.exports = cds.service.impl(async function () {
         let {
             attachments, tab1, tab2, tab3, vendor_data, Fvendor_responseoo, PAYMENT_TERM_DETAILS, WORKFLOW_HISTORY, PAN_PRICE_DETAILS, PAN_Payment_Method_Drop, PAN_Comments,
-            PAN_Details_APR, PAN_WEB_EVENT_APR, PAN_TYPE_APR, PAN_vendor_data_APR, PAN_vendor_response_APR, PAN_PAYMENT_TERM_DETAILS_APR, PAN_PRICE_DETAILS_APR, PAN_WORKFLOW_HISTORY_APR, PAN_attachments_APR, PAN_Payment_Method_Drop_APR, PAN_Comments_APR
+            PAN_Details_APR, PAN_WEB_EVENT_APR, PAN_TYPE_APR, PAN_vendor_data_APR, PAN_vendor_response_APR, PAN_PAYMENT_TERM_DETAILS_APR, PAN_PRICE_DETAILS_APR, PAN_WORKFLOW_HISTORY_APR, PAN_attachments_APR, PAN_Payment_Method_Drop_APR, PAN_Comments_APR, vendorTaxDetails_APR
         } = this.entities;
         let ariba = await cds.connect.to('ariba');
         //sourcing project api's
@@ -45,9 +45,9 @@ if (isMainThread) {
             debugger
             //declare variables
             // Initialize as empty strings
-            var projCurrency = "", Others = "",totalAwardPrice='', ComplianceTerms = "",region1='',proj_currency='',tech_commitee_clearedproposal='',
-            sup_main_add='', sdate = "", eventNo = "",SBG = "",SBU = "",Discount_Amount = "",created_by  = "",
-                CommercialTerms = "", IndianTaxPER = "", delivery_date = "", date_obj = "", tolerence = "",
+            var projCurrency = "", Others = "", totalAwardPrice = '', ComplianceTerms = "", region1 = '', proj_currency = '', tech_commitee_clearedproposal = '',
+                sup_main_add = '', sdate = "", eventNo = "", SBG = "", SBU = "", Discount_Amount = "", created_by = "",
+                CommercialTerms = "", IndianTaxPER = "", delivery_date = "", date_obj = "", tolerence = "", Item_Code = "",
                 delivery_schedule1 = "", v1amt = "", delivery_schedule = "", extend_price = "", Amount = "",
                 UnitPrice = "", l4Amount = "", l3Amount = "", bid_currency = "", l1Amount = "", Freight = "",
                 Quantity = "", ItemCode = "", SACCode = "", ItemShortDescription = "", ScopeandResponsibilities = "",
@@ -55,19 +55,19 @@ if (isMainThread) {
                 by1 = "", by = "", retention_documents = "", progress_documents = "", Advance_per = "", Advance = "",
                 webPublishDate = "", createDate = "", finalDate = "", task_id = "", per_pay_pro = "", per_pay_ret = "",
                 projDesc = "", pay_date = "", tech_app = "", tech_acc = "", vfinal_quote = "", progress = "",
-                acc_subdate = "", baseLinespend1 = "", baselinespend = "",discount_amt1="",final_quote = "", ainv_id = "", payment_type = "", returnDoc = "", plant = "",
-                ser_mate='',pvcode ='', requisitionId = "",icon_type='',sm_id="",smid ='', GstNo = "", cescore = "", supmainadd = "", houseID = "", city = "", postalCode = "",
+                acc_subdate = "", baseLinespend1 = "", baselinespend = "", discount_amt1 = "", final_quote = "", ainv_id = "", payment_type = "", returnDoc = "", plant = "",
+                ser_mate = '', pvcode = '', requisitionId = "", icon_type = '', sm_id = "", smid = '', GstNo = "", cescore = "", supmainadd = "", houseID = "", city = "", postalCode = "",
                 region = "", supplierdata = "", responsedata4 = "", country = "", contact_phone = "", mobile_phone = "",
-                email = "",res_body = "", last_name = "",pcod="",na_smdate="", first_name = "", supplier_contact1 = "";
+                email = "", res_body = "", last_name = "", pcod = "", na_smdate = "", first_name = "", supplier_contact1 = "", sname = "", UOM = "";
 
             // Initialize as numbers
-            var tec_app = 0,sup_count = 0,na_ind = 0,original_quote = 0,original_quote1 = 0, pageNo = 0,final_quote1 = 0,vendor_loc = 0,dis_per = 0,discount_amt2 = 0,discount_amt = 0,pVendor = 0, vc = 0, no_of_docs = 0;
+            var tec_app = 0, sup_count = 0, na_ind = 0, original_quote = 0, original_quote1 = 0, pageNo = 0, final_quote1 = 0, vendor_loc = 0, dis_per = 0, discount_amt2 = 0, discount_amt = 0, pVendor = 0, vc = 0, no_of_docs = 0;
 
             // Initialize as objects
             var webSupCount = {};
-            var tapp = '',trank = '';
+            var tapp = '', trank = '';
             // Initialize as arrays
-            var sc_web_tab2 = [], na_date = [], pan_web_event = [],vendordata1=[], shrt_lst_count = [],rounds_data=[],
+            var sc_web_tab2 = [], na_date = [], pan_web_event = [], vendordata1 = [], shrt_lst_count = [], rounds_data = [],
                 workerPromises = [], tec_rank = [], vendor_data = [], final_quotearr = [],
                 pan_vendor_response = [], payment_details = [], supplier = [], version1 = [],
                 vendorIds = [], l2Amount = [], l1amount = [], vendorIds1 = [], material_items = [],
@@ -75,7 +75,7 @@ if (isMainThread) {
                 panheader = [], web_logic = [];
 
             let { user: userEmail, project: projectId } = req.data;
-            created_by =userEmail;
+            created_by = userEmail;
             const createWorker = function (url, query, basis, path) {
                 return new Promise((resolve) => {
                     const worker = new Worker(__filename, { workerData: { url: url, basis: basis, query: query, path, path } });
@@ -138,22 +138,34 @@ if (isMainThread) {
                     };
 
                     try {
-                        let body9=[{idd:'1',
-                            PAN_Number:no_of_docs.doc_id,
-                            Employee_ID:'rajendraakshay1@gmail.com',
-                            Employee_Name:'rajendraakshay1@gmail.com',
-                            level:'1'
-                        },{idd:'2',
-                            PAN_Number:no_of_docs.doc_id,
-                            Employee_ID:'rajendraakshay1@gmail.com',
-                            Employee_Name:'rajendraakshay1@gmail.com',
-                            level:'2'}]
+                        let body9 = [{
+                            idd: '1',
+                            PAN_Number: no_of_docs.doc_id,
+                            Employee_ID: 'rajendraakshay1@gmail.com',
+                            Employee_Name: 'rajendraakshay1@gmail.com',
+                            level: '1'
+                        }, {
+                            idd: '2',
+                            PAN_Number: no_of_docs.doc_id,
+                            Employee_ID: 'rajendraakshay1@gmail.com',
+                            Employee_Name: 'rajendraakshay1@gmail.com',
+                            level: '2'
+                        },
+                        {
+                            idd: '3',
+                            PAN_Number: no_of_docs.doc_id,
+                            Employee_ID: 'dhanush.gangatkar@peolsolutions.com',
+                            Employee_Name: 'dhanush.gangatkar@peolsolutions.com',
+                            level: '2'
+                        }
+
+                        ]
                         const response_PAN_WORKFLOW_HISTORY_APR = await INSERT.into(PAN_WORKFLOW_HISTORY_APR).entries(body9);
                     } catch (error) {
                         console.log(error)
                     }
 
-                    let tsk_ind = await SELECT.from('PAN_Details').where ('task_id =', task_id);
+                    let tsk_ind = await SELECT.from('PAN_Details').where('task_id =', task_id);
                     if (tsk_ind.length) {
                         return tsk_ind[0].PAN_Number;
                     } else {
@@ -185,7 +197,7 @@ if (isMainThread) {
                                         if (result.payload[0].eventId && !(result instanceof Error)) {
                                             sup_count = result.payload[0].selectedSuppliersCount || "";
                                             shrt_lst_count = result;
-                                            totalAwardPrice=returnamt(result.payload[0].totalAwardPrice.amount)
+                                            totalAwardPrice = returnamt(result.payload[0].totalAwardPrice.amount)
                                         }
 
                                         break;
@@ -214,30 +226,31 @@ if (isMainThread) {
                         else {
                             pVendor = 0;
                         }
-                        workerPromises=[];
+                        workerPromises = [];
                         if (supplier.length) { //getting vendor details
                             for (let k = 0; k < supplier.length; k++) {
+                                sname = supplier[k].supplier_name;
                                 if (vendorIds.length != 0) {
                                     var vendorid = vendorIds[k].smvendor_id;
-                                     pvcode = vendorIds[k].smvendor_id;
-                                     smid = vendorIds[k].smvendor_id;
-                                  } else {
+                                    pvcode = vendorIds[k].smvendor_id;
+                                    smid = vendorIds[k].smvendor_id;
+                                } else {
                                     var vendorid = "";
-                                     pvcode = "";
-                                  }
+                                    pvcode = "";
+                                }
                                 workerPromises.push(createWorker(DocumentSupplierBidsUrl.replace('<docId>', no_of_docs.doc_id).replace('<sName>', supplier[k].supplier_name), DocumentQuery, DocumentBasicPassword, 'DocumentSupplierBidsUrl'));
                                 workerPromises.push(createWorker(DocumentRoundsUrl.replace('<docId>', no_of_docs.doc_id), DocumentQuery, DocumentBasicPassword, 'DocumentRoundsUrl'));
                                 workerPromises.push(createWorker(SupplierQuestionariesUrl.replace('<vendorId>', vendorIds[k].smvendor_id), SupplierQuestionariesQuery, SupplierQuestionariesBasicPassword, 'SupplierQuestionariesUrl'));
-                                
+
                                 var thread_results1 = await Promise.all(workerPromises);
                                 if (thread_results1.length) {
                                     for (let i = 0; i < thread_results1.length; i++) {
                                         if (!Array.isArray(thread_results1[i].payload) && (!(thread_results1[i] instanceof Error))) {
                                             supplierdata = thread_results1[i];
                                         }
-                                        else if (Array.isArray(thread_results1[i].payload)&& thread_results1[i].path=='DocumentSupplierBidsUrl' && (!(thread_results1[i] instanceof Error))) {
+                                        else if (Array.isArray(thread_results1[i].payload) && thread_results1[i].path == 'DocumentSupplierBidsUrl' && (!(thread_results1[i] instanceof Error))) {
                                             responsedata4 = thread_results1[i];
-                                        }   else if (Array.isArray(thread_results1[i].payload)&& thread_results1[i].path=='DocumentRoundsUrl' && (!(thread_results1[i] instanceof Error))) {
+                                        } else if (Array.isArray(thread_results1[i].payload) && thread_results1[i].path == 'DocumentRoundsUrl' && (!(thread_results1[i] instanceof Error))) {
                                             rounds_data = thread_results1[i];
                                         }
                                     }
@@ -307,8 +320,8 @@ if (isMainThread) {
 
 
                                         for (let k2 = 0; k2 < responsedata4.payload.length; k2++) {
-                                                //mod
-                                                acc_subdate=responsedata4.payload[k2].submissionDate;
+                                            //mod
+                                            acc_subdate = responsedata4.payload[k2].submissionDate;
                                             if ("invitationId" in responsedata4.payload[k2]) {
                                                 venador_names.push({
                                                     vname: responsedata4.payload[k2].invitationId
@@ -661,136 +674,136 @@ if (isMainThread) {
 
                                                         console.log("stage2.1")
 
-                                                        if (ser_mate == "Material" || ser_mate == "Both") {
-                                                            if (material_items.length != 0) {
-                                                                for (let b = 0; b < material_items.length; b++) {
-                                                                    for (let a = 0; a < responsedata4.payload.length; a++) {
-                                                                        if (responsedata4.payload[a].itemId == material_items[b].itemid) {
-                                                                            if ("bidStatus" in responsedata4.payload[k2]) {
-                                                                                if (responsedata4.payload[k2].bidStatus == "Accepted") {
-                                                                                    if ("item" in responsedata4.payload[a]) {
-                                                                                        if ("title" in responsedata4.payload[a].item) {
-                                                                                            ItemShortDescription = responsedata4.payload[a].item.title;
-                                                                                        }
+                                                        // if (ser_mate == "Material" || ser_mate == "Both") {
+                                                        if (material_items.length != 0) {
+                                                            for (let b = 0; b < material_items.length; b++) {
+                                                                for (let a = 0; a < responsedata4.payload.length; a++) {
+                                                                    if (responsedata4.payload[a].itemId == material_items[b].itemid) {
+                                                                        if ("bidStatus" in responsedata4.payload[k2]) {
+                                                                            if (responsedata4.payload[k2].bidStatus == "Accepted") {
+                                                                                if ("item" in responsedata4.payload[a]) {
+                                                                                    if ("title" in responsedata4.payload[a].item) {
+                                                                                        ItemShortDescription = responsedata4.payload[a].item.title;
+                                                                                        Item_Code = responsedata4.payload[a].item.itemId;
                                                                                     }
-                                                                                    if ("terms" in responsedata4.payload[a].item && responsedata4.payload[a].item.terms.length != 0) {
-                                                                                        let terms = responsedata4.payload[a].item.terms;
-                                                                                        if (terms.length != 0) {
-                                                                                            var value1 = "value";
-                                                                                            for (let m = 0; m < terms.length; m++) {
-                                                                                                if (terms[m].title == "SACCode") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        SACCode = terms[m].value.simpleValue;
-                                                                                                    } else {
-                                                                                                        SACCode = "";
+                                                                                }
+                                                                                if ("terms" in responsedata4.payload[a].item && responsedata4.payload[a].item.terms.length != 0) {
+                                                                                    let terms = responsedata4.payload[a].item.terms;
+                                                                                    if (terms.length != 0) {
+                                                                                        var value1 = "value";
+                                                                                        for (let m = 0; m < terms.length; m++) {
+                                                                                            if (terms[m].title == "SACCode") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    SACCode = terms[m].value.simpleValue;
+                                                                                                } else {
+                                                                                                    SACCode = "";
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Material Code") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    ItemCode = terms[m].value.simpleValue;
+                                                                                                    let match = ItemCode.match(/^\d+/);
+                                                                                                    let output = match ? match[0] : null;
+                                                                                                    ItemCode = output;
+                                                                                                } else {
+                                                                                                    ItemCode = "";
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Quantity") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    UOM = terms[m].value.quantityValue.unitOfMeasureName;
+                                                                                                    Quantity = terms[m].value.quantityValue.amount;
+                                                                                                    Quantity = Quantity.toLocaleString('en-US');
+                                                                                                } else {
+                                                                                                    Quantity = "";
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Freight") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    Freight = terms[m].value.moneyValue.amount;
+                                                                                                } else {
+                                                                                                    Freight = "";
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Total Cost") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    l1Amount = l1Amount + terms[m].value.moneyValue.amount;
+                                                                                                    bid_currency = terms[m].value.supplierValue.currency;
+                                                                                                    l3Amount = terms[m].value.moneyValue.amount;
+                                                                                                    l4Amount = returnamt(l3Amount);
+                                                                                                } else {
+                                                                                                    l1Amount = 0;
+                                                                                                    bid_currency = "";
+                                                                                                    l3Amount = 0;
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Price") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    UnitPrice = terms[m].value.moneyValue.currency;
+                                                                                                    Amount = terms[m].value.moneyValue.amount;
+                                                                                                    if (UnitPrice == "INR") {
+                                                                                                        Amount = Amount.toLocaleString('en-IN');
+                                                                                                    }
+                                                                                                    if (UnitPrice == "USD") {
+                                                                                                        Amount = Amount.toLocaleString('en-US');
                                                                                                     }
                                                                                                 }
-                                                                                                if (terms[m].title == "Material Code") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        ItemCode = terms[m].value.simpleValue;
-                                                                                                        let match = ItemCode.match(/^\d+/);
-                                                                                                        let output = match ? match[0] : null;
-                                                                                                        ItemCode = output;
-                                                                                                    } else {
-                                                                                                        ItemCode = "";
+                                                                                                else {
+                                                                                                    UnitPrice = "";
+                                                                                                    Amount = "";
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Extended Price") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    extend_price = terms[m].value.moneyValue.amount;
+                                                                                                    extend_price = returnamt(extend_price);
+                                                                                                }
+                                                                                                else {
+                                                                                                    extend_price = "";
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Delivery Schedule - Quantity") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    delivery_schedule = terms[m].value.simpleValue;
+                                                                                                }
+                                                                                                else {
+                                                                                                    delivery_schedule = "";
+                                                                                                }
+                                                                                            }
+                                                                                            if (terms[m].title == "Delivery Schedule - Date") {
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    delivery_schedule1 = terms[m].value.simpleValue;
+                                                                                                    if (delivery_schedule != "") {
+                                                                                                        delivery_schedule = delivery_schedule + " " + delivery_schedule1;
                                                                                                     }
                                                                                                 }
-                                                                                                if (terms[m].title == "Quantity") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        UOM = terms[m].value.quantityValue.unitOfMeasureName;
-                                                                                                        Quantity = terms[m].value.quantityValue.amount;
-                                                                                                        Quantity = Quantity.toLocaleString('en-US');
-                                                                                                    } else {
-                                                                                                        Quantity = "";
-                                                                                                    }
+                                                                                                else {
+                                                                                                    delivery_schedule = ""
                                                                                                 }
-                                                                                                if (terms[m].title == "Freight") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        Freight = terms[m].value.moneyValue.amount;
-                                                                                                    } else {
-                                                                                                        Freight = "";
-                                                                                                    }
-                                                                                                }
-                                                                                                if (terms[m].title == "Total Cost") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        l1Amount = l1Amount + terms[m].value.moneyValue.amount;
-                                                                                                        bid_currency = terms[m].value.supplierValue.currency;
-                                                                                                        l3Amount = terms[m].value.moneyValue.amount;
-                                                                                                        l4Amount = returnamt(l3Amount);
-                                                                                                    } else {
-                                                                                                        l1Amount = 0;
-                                                                                                        bid_currency = "";
-                                                                                                        l3Amount = 0;
-                                                                                                    }
-                                                                                                }
-                                                                                                if (terms[m].title == "Price") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        UnitPrice = terms[m].value.moneyValue.currency;
-                                                                                                        Amount = terms[m].value.moneyValue.amount;
-                                                                                                        if (UnitPrice == "INR") {
-                                                                                                            Amount = Amount.toLocaleString('en-IN');
-                                                                                                        }
-                                                                                                        if (UnitPrice == "USD") {
-                                                                                                            Amount = Amount.toLocaleString('en-US');
-                                                                                                        }
-                                                                                                    }
-                                                                                                    else {
-                                                                                                        UnitPrice = "";
-                                                                                                        Amount = "";
-                                                                                                    }
-                                                                                                }
-                                                                                                if (terms[m].title == "Extended Price") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        extend_price = terms[m].value.moneyValue.amount;
-                                                                                                        extend_price = returnamt(extend_price);
-                                                                                                    }
-                                                                                                    else {
-                                                                                                        extend_price = "";
-                                                                                                    }
-                                                                                                }
-                                                                                                if (terms[m].title == "Delivery Schedule - Quantity") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        delivery_schedule = terms[m].value.simpleValue;
-                                                                                                    }
-                                                                                                    else {
-                                                                                                        delivery_schedule = "";
-                                                                                                    }
-                                                                                                }
-                                                                                                if (terms[m].title == "Delivery Schedule - Date") {
-                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        delivery_schedule1 = terms[m].value.simpleValue;
-                                                                                                        if (delivery_schedule != "") {
-                                                                                                            delivery_schedule = delivery_schedule + " " + delivery_schedule1;
-                                                                                                        }
-                                                                                                    }
-                                                                                                    else {
-                                                                                                        delivery_schedule = ""
-                                                                                                    }
-                                                                                                }
-                                                                                                if (terms[m].title == "Quantity Over Delivery Tolerance") {
+                                                                                            }
+                                                                                            if (terms[m].title == "Quantity Over Delivery Tolerance") {
 
 
+                                                                                                if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                    tolerence = terms[m].value.simpleValue;
+                                                                                                } else {
+                                                                                                    tolerence = ""
+                                                                                                }
+                                                                                                if (terms[m].title == "Delivery Date") {
                                                                                                     if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                        tolerence = terms[m].value.simpleValue;
+                                                                                                        var date_obj = terms[m].value.dateValue;
+                                                                                                        date_obj = new Date(date_obj);
+                                                                                                        delivery_date = date_obj.toISOString().split('T')[0];
+                                                                                                        delivery_date = returndate(delivery_date);
                                                                                                     } else {
-                                                                                                        tolerence = ""
+                                                                                                        delivery_date = ""
                                                                                                     }
-                                                                                                    if (terms[m].title == "Delivery Date") {
-                                                                                                        if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                            var date_obj = terms[m].value.dateValue;
-                                                                                                            date_obj = new Date(date_obj);
-                                                                                                            delivery_date = date_obj.toISOString().split('T')[0];
-                                                                                                            delivery_date = returndate(delivery_date);
-                                                                                                        } else {
-                                                                                                            delivery_date = ""
-                                                                                                        }
-                                                                                                    }
-                                                                                                    if (terms[m].title == "Tax") {
-                                                                                                        if (Object.keys(terms[m]).includes(value1)) {
-                                                                                                            IndianTaxPER = terms[m].value.simpleValue;
-                                                                                                        } else {
-                                                                                                            IndianTaxPER = "";
-                                                                                                        }
+                                                                                                }
+                                                                                                if (terms[m].title == "Tax") {
+                                                                                                    if (Object.keys(terms[m]).includes(value1)) {
+                                                                                                        IndianTaxPER = terms[m].value.simpleValue;
+                                                                                                    } else {
+                                                                                                        IndianTaxPER = "";
                                                                                                     }
                                                                                                 }
                                                                                             }
@@ -799,24 +812,10 @@ if (isMainThread) {
                                                                                 }
                                                                             }
                                                                         }
-                                                                        if (no_of_docs.doc_id != no_of_docs.doc_id) {
-                                                                            price_details.push({
-                                                                                Proposed_Vendor_Code: `${pvcode}`,
-                                                                                PAN_Number: `${no_of_docs.doc_id}`,
-                                                                                Item_Code: `${ItemCode}`,
-                                                                                Proposed_Vendor_Code: `${pvcode}`,
-                                                                                PAN_Number: `${no_of_docs.doc_id}`,
-                                                                                HSN_OR_SAC_Code: `${SACCode}`,
-                                                                                Item_Short_Description: `${ItemShortDescription}`,
-                                                                                UOM: `${UOM}`,
-                                                                                Quantity: `${Quantity}`,
-                                                                                Unit_Price: `${Amount}`,
-                                                                                Amount: `${l4Amount}`,
-                                                                                extendedPrice: `${extend_price}`,
-                                                                                Indian_Tax_PER: `${IndianTaxPER}`,
-                                                                                Quantity_Over_Delivery_Tolerance: `${tolerence}`,
-                                                                            })
-                                                                        }
+                                                                        // }
+                                                                        // if (no_of_docs.doc_id != no_of_docs.doc_id) {
+
+
                                                                         vendortaxdetails.push({
                                                                             Proposed_Vendor_Code: `${pvcode}`,
                                                                             PAN_Number: `${no_of_docs.doc_id}`,
@@ -831,28 +830,46 @@ if (isMainThread) {
                                                                             inv_id: `${sname}`,
                                                                             amount: `${l3Amount}`,
                                                                         })
-                                                                        SACCode = "";
-                                                                        ItemCode = "";
-                                                                        ItemShortDescription = "";
-                                                                        UOM = "";
-                                                                        Quantity = "";
-                                                                        Amount = "";
-                                                                        l4Amount = "";
-                                                                        extend_price = "";
-                                                                        IndianTaxPER = "";
-                                                                        tolerence = "";
-                                                                        l3Amount = 0;
                                                                     }
-                                                                    material_items = [];
-                                                                    l1amount.push(
-                                                                        l1Amount,
-                                                                    )
-                                                                    l2Amount = l1Amount;
-                                                                    l2Amount = returnamt(l2Amount);
-                                                                    l1Amount = 0;
                                                                 }
+                                                                price_details.push({
+                                                                    Proposed_Vendor_Code: `${pvcode}`,
+                                                                    PAN_Number: `${no_of_docs.doc_id}`,
+                                                                    Item_Code: Item_Code,
+                                                                    Proposed_Vendor_Code: `${pvcode}`,
+                                                                    PAN_Number: `${no_of_docs.doc_id}`,
+                                                                    HSN_OR_SAC_Code: `${SACCode}`,
+                                                                    Item_Short_Description: `${ItemShortDescription}`,
+                                                                    UOM: `${UOM}`,
+                                                                    Quantity: `${Quantity}`,
+                                                                    Unit_Price: `${Amount}`,
+                                                                    Amount: `${l4Amount}`,
+                                                                    extendedPrice: `${extend_price}`,
+                                                                    Indian_Tax_PER: `${IndianTaxPER}`,
+                                                                    Quantity_Over_Delivery_Tolerance: `${tolerence}`,
+                                                                })
+                                                                Item_Code = "";
+                                                                SACCode = "";
+                                                                ItemCode = "";
+                                                                ItemShortDescription = "";
+                                                                UOM = "";
+                                                                Quantity = "";
+                                                                Amount = "";
+                                                                l4Amount = "";
+                                                                extend_price = "";
+                                                                IndianTaxPER = "";
+                                                                tolerence = "";
+                                                                l3Amount = 0;
+                                                                l1amount.push(
+                                                                    l1Amount,
+                                                                )
+                                                                l2Amount = l1Amount;
+                                                                l2Amount = returnamt(l2Amount);
+                                                                l1Amount = 0;
                                                             }
+                                                            material_items = [];
                                                         }
+                                                        // }
                                                     }
                                                     else if (responsedata4.payload[k2].bidStatus == "Replaced") {
                                                         var value3 = "value";
@@ -887,7 +904,7 @@ if (isMainThread) {
                                                                             inv_id: responsedata4.payload[k2].invitationId,
                                                                             vcount: vc,
                                                                             sm_id: smid,
-                                                                            type: pRes.payload[0].iconType ,
+                                                                            type: pRes.payload[0].iconType,
 
                                                                         })
                                                                         var sdate = responsedata4.payload[k2].submissionDate;
@@ -1090,7 +1107,7 @@ if (isMainThread) {
 
                             }
 
-                            
+
                             var vendorids1 = vendorIds;
                             vendorIds = [];
                         }
@@ -1173,7 +1190,7 @@ if (isMainThread) {
                     var type1 = "";
                     var type = "";
                     var typew = "";
-                    var date =[],date1 =[];
+                    var date = [], date1 = [];
                     // for (let d = 0; d < web_logic.length; d++) {
 
                     //     if (web_logic[d].sub_date != "") {
@@ -1302,27 +1319,61 @@ if (isMainThread) {
                     //     }
                     // }
 
-                    if(totalAwardPrice){
-                        let firstRound=rounds_data.payload.filter((r)=>r.roundNumber==1);
-                        let lastRound=rounds_data.payload.filter((r)=>r.roundNumber==rounds_data.payload.length);
-                                              pan_web_event.push({
-                                            idd: "1",
-                                            PAN_Number: no_of_docs.doc_id.toString(),
-                                            eventNo: "First Published",
-                                            number: `${no_of_docs.doc_id}(Round 1)`,
-                                            date: returndate(firstRound[0].biddingStartDate.substring(0, 10)),
-                                            numberOfVendorsParticipated: firstRound[0].suppliers.length.toString(),
-                                            l1AmountObtained: 'N/A',
-                                        })
-                                                                   pan_web_event.push({
-                                                idd: "2",
-                                                PAN_Number: no_of_docs.doc_id.toString(),
-                                                eventNo: "Last Published(Before RA)",
-                                                number: `${no_of_docs.doc_id}(Round ${lastRound[0].roundNumber})`,
-                                                date:returndate(lastRound[0].biddingStartDate.substring(0, 10)),
-                                                numberOfVendorsParticipated: lastRound[0].suppliers.length.toString(),
-                                                l1AmountObtained: totalAwardPrice,
-                                            })
+                    if (totalAwardPrice) {
+                        // let firstRound=rounds_data.payload.filter((r)=>r.roundNumber==1);
+                        let firstRound = Array.isArray(rounds_data?.payload) ? rounds_data.payload.filter((r) => r.roundNumber === 1) : [];
+                        // let lastRound=rounds_data.payload.filter((r)=>r.roundNumber==rounds_data.payload.length);
+                        let lastRound = rounds_data?.payload?.filter?.(
+                            (r) => r.roundNumber === rounds_data.payload.length
+                        ) || [];
+
+                        // pan_web_event.push({
+                        //     idd: "1",
+                        //     PAN_Number: no_of_docs.doc_id.toString(),
+                        //     eventNo: "First Published",
+                        //     number: `${no_of_docs.doc_id}(Round 1)`,
+                        //     date: returndate(firstRound[0].biddingStartDate.substring(0, 10)),
+                        //     numberOfVendorsParticipated: firstRound[0].suppliers.length.toString(),
+                        //     l1AmountObtained: 'N/A',
+                        // })
+                        let first = firstRound?.[0] || {}; // Safely get first round object or default to empty object
+                        let last = lastRound?.[0] || {}; // Fallback to empty object if undefined
+                        pan_web_event.push({
+                            idd: "1",
+                            PAN_Number: no_of_docs?.doc_id?.toString() || "",
+                            eventNo: "First Published",
+                            number: `${no_of_docs?.doc_id || ""}(Round 1)`,
+                            date: first?.biddingStartDate
+                                ? returndate(first.biddingStartDate.substring(0, 10))
+                                : "",
+                            numberOfVendorsParticipated: Array.isArray(first?.suppliers)
+                                ? first.suppliers.length.toString()
+                                : "0",
+                            l1AmountObtained: "N/A",
+                        });
+                        // pan_web_event.push({
+                        //     idd: "2",
+                        //     PAN_Number: no_of_docs.doc_id.toString(),
+                        //     eventNo: "Last Published(Before RA)",
+                        //     number: `${no_of_docs.doc_id}(Round ${lastRound[0].roundNumber})`,
+                        //     date: returndate(lastRound[0].biddingStartDate.substring(0, 10)),
+                        //     numberOfVendorsParticipated: lastRound[0].suppliers.length.toString(),
+                        //     l1AmountObtained: totalAwardPrice,
+                        // })
+
+                        pan_web_event.push({
+                            idd: "2",
+                            PAN_Number: no_of_docs?.doc_id?.toString() || "",
+                            eventNo: "Last Published(Before RA)",
+                            number: `${no_of_docs?.doc_id || ""}(Round ${last?.roundNumber || "?"})`,
+                            date: last?.biddingStartDate
+                                ? returndate(last.biddingStartDate.substring(0, 10))
+                                : "",
+                            numberOfVendorsParticipated: Array.isArray(last?.suppliers)
+                                ? last.suppliers.length.toString()
+                                : "0",
+                            l1AmountObtained: totalAwardPrice || "N/A",
+                        });
                     }
                 }
 
@@ -1957,7 +2008,7 @@ if (isMainThread) {
                 var weind = "";
                 var web_ind = 0;
                 for (let w = 0; w < pan_web_event.length; w++) {
-                    if (pan_web_event[w].number.substring(0,11) == no_of_docs.doc_id) {
+                    if (pan_web_event[w].number.substring(0, 11) == no_of_docs.doc_id) {
                         web_ind = web_ind + 1;
                         weind = pan_web_event[w].eventNo
                         // if(pan_web_event[w].eventNo == "Last Published(Before RA)" && l1AmountObtained == 0 || pan_web_event[w].eventNo == "Last Published(Before RA)" && l1AmountObtained == 0 || pan_web_event[w].eventNo == "Last Published(Before RA)" && l1AmountObtained == 0  )
@@ -2016,10 +2067,10 @@ if (isMainThread) {
                     //     discount_amt1 = pan_web_event[0].l1AmountObtained - pan_web_event[2].l1AmountObtained;
                     // }
                     // else
-                     if (pan_web_event[1].number.substring(0,11) != "NA") {
+                    if (pan_web_event[1].number.substring(0, 11) != "NA") {
                         discount_amt1 = pan_web_event[0].l1AmountObtained - pan_web_event[1].l1AmountObtained;
                     }
-                    else if (pan_web_event[0].number.substring(0,11) != "NA") {
+                    else if (pan_web_event[0].number.substring(0, 11) != "NA") {
                         discount_amt1 = pan_web_event[0].l1AmountObtained;
                     }
 
@@ -2139,7 +2190,7 @@ if (isMainThread) {
 
 
                 for (let k = 0; k < pan_web_event.length; k++) {
-                    if (pan_web_event[k].number.substring(0,11) != "NA") {
+                    if (pan_web_event[k].number.substring(0, 11) != "NA") {
                         pan_web_event[k].l1AmountObtained = returnamt(pan_web_event[k].l1AmountObtained);
                     }
                 }
@@ -2300,17 +2351,18 @@ if (isMainThread) {
 
                     }
                 }
-               
+
                 //CLEARING ALL THE ARRAYS
+
                 projects_docs = [];
                 panheader = [];
                 pan_web_event = [];
                 pan_type = [];
                 payment_details = [];
-                vendordata = [];
+                // vendordata = [];
                 pan_vendor_response = [];
                 price_details = [];
-
+                console.log("final code")
                 // }
                 return no_of_docs.doc_id;
             }
@@ -2330,7 +2382,7 @@ if (isMainThread) {
         });
         this.before('READ', 'PAN_Details_APR', async (req) => {
             debugger
-            
+
 
         });
 
